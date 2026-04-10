@@ -4,6 +4,7 @@ $TestMode = $false
 $ModLists = @(
     @{ Name = "Lunar"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3320591539" },
     @{ Name = "Vinlark"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3619129132" },
+    @{ Name = "INX"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=1860635521" },
     @{ Name = "Reborn"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3693245779" }
 )
 
