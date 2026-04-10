@@ -1,9 +1,14 @@
+
+$TestMode = $false
+
+$ModLists = @(
+    @{ Name = "Lunar"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3320591539" },
+    @{ Name = "Vinlark"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3619129132" },
+    @{ Name = "Reborn"; Url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3693245779" }
+)
+
 $CustomArkModsPath = ""
 $CustomSteamExeLocation = ""
-$WorkshopCollectionUrl = "https://steamcommunity.com/sharedfiles/filedetails/?id=3693245779"
-# "https://steamcommunity.com/sharedfiles/filedetails/?id=3320591539" #Lunar
-# "https://steamcommunity.com/sharedfiles/filedetails/?id=3619129132" #Vinlark
-# "https://steamcommunity.com/sharedfiles/filedetails/?id=3693245779" #Reborn
 $OpenSubscriptionsPage = $true
 
 
@@ -11,6 +16,37 @@ Write-Host "======================================================" -ForegroundC
 Write-Host " ARK: Survival Evolved - Mod Version Mismatch Resolver" -ForegroundColor Cyan
 Write-Host "======================================================" -ForegroundColor Cyan
 Write-Host ""
+
+if ($TestMode) {
+    Write-Host ">>> TEST MODE ENABLED - NO FILES WILL BE DELETED <<<" -ForegroundColor Yellow -BackgroundColor Red
+    Write-Host ""
+}
+
+$WorkshopCollectionUrl = ""
+while ([string]::IsNullOrWhiteSpace($WorkshopCollectionUrl)) {
+    Write-Host "Please select a ModList to load:" -ForegroundColor Cyan
+    for ($i = 0; $i -lt $ModLists.Count; $i++) {
+        Write-Host "  [$($i + 1)] $($ModLists[$i].Name)" -ForegroundColor White
+    }
+    Write-Host "  [X] Exit" -ForegroundColor Red
+    
+    $choice = Read-Host ">>> Selection"
+    
+    if ($choice -eq "X" -or $choice -eq "x") {
+        Write-Host "Exiting..." -ForegroundColor Red
+        exit
+    }
+    $index = 0
+    if ([int]::TryParse($choice, [ref]$index) -and $index -gt 0 -and $index -le $ModLists.Count) {
+        $selectedMod = $ModLists[$index - 1]
+        $WorkshopCollectionUrl = $selectedMod.Url
+        Write-Host "[+] Selected: $($selectedMod.Name)" -ForegroundColor Green
+    }
+    else {
+        Write-Host "[-] Invalid selection. Please try again." -ForegroundColor Red
+    }
+    Write-Host ""
+}
 
 function Wait-UserConfirmation([string]$Message) {
     Write-Host ""
@@ -127,16 +163,21 @@ if (-not [string]::IsNullOrWhiteSpace($arkModPath) -and (Test-Path $arkModPath))
             
     foreach ($folder in $modFolders) {
         Write-Host "    - Deleting Mod Folder: $($folder.Name)" -ForegroundColor DarkGray
-        Remove-Item -Path $folder.FullName -Recurse -Force
+        if (-not $TestMode) {
+            Remove-Item -Path $folder.FullName -Recurse -Force
+        }
         $totalDeleted++
     }
             
     foreach ($file in $modFiles) {
-        Remove-Item -Path $file.FullName -Force
+        if (-not $TestMode) {
+            Remove-Item -Path $file.FullName -Force
+        }
     }
             
     if ($totalDeleted -gt 0) {
-        Write-Host "[+] Successfully deleted $totalDeleted mod(s) from game folder." -ForegroundColor Green
+        $msgSuffix = if ($TestMode) { "(SIMULATED)" } else { "" }
+        Write-Host "[+] Successfully deleted $totalDeleted mod(s) from game folder $msgSuffix." -ForegroundColor Green
     }
     else {
         Write-Host "[+] No numbered mods found to delete in game folder." -ForegroundColor Green
@@ -152,12 +193,15 @@ if (-not [string]::IsNullOrWhiteSpace($workshopPath) -and (Test-Path $workshopPa
     
     foreach ($folder in $workshopFolders) {
         Write-Host "    - Deleting Workshop Cache: $($folder.Name)" -ForegroundColor DarkGray
-        Remove-Item -Path $folder.FullName -Recurse -Force
+        if (-not $TestMode) {
+            Remove-Item -Path $folder.FullName -Recurse -Force
+        }
         $workshopDeleted++
     }
     
     if ($workshopDeleted -gt 0) {
-        Write-Host "[+] Successfully deleted $workshopDeleted item(s) from workshop cache." -ForegroundColor Green
+        $msgSuffix = if ($TestMode) { "(SIMULATED)" } else { "" }
+        Write-Host "[+] Successfully deleted $workshopDeleted item(s) from workshop cache $msgSuffix." -ForegroundColor Green
     }
     else {
         Write-Host "[+] Workshop cache is already empty." -ForegroundColor Green
