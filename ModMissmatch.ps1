@@ -1,8 +1,9 @@
 $CustomArkModsPath = ""
 $CustomSteamExeLocation = ""
-$WorkshopCollectionUrl = "https://steamcommunity.com/sharedfiles/filedetails/?id=3619129132"
+$WorkshopCollectionUrl = "https://steamcommunity.com/sharedfiles/filedetails/?id=3693245779"
 # "https://steamcommunity.com/sharedfiles/filedetails/?id=3320591539" #Lunar
 # "https://steamcommunity.com/sharedfiles/filedetails/?id=3619129132" #Vinlark
+# "https://steamcommunity.com/sharedfiles/filedetails/?id=3693245779" #Reborn
 $OpenSubscriptionsPage = $true
 
 
